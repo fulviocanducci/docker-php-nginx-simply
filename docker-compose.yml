@@ -1,0 +1,49 @@
+version: '3.1'
+
+volumes:
+  web:
+    driver: local
+  database:
+    driver: local
+
+networks:
+  eth0:
+    driver: bridge
+
+services:
+  web:
+    build: .
+    container_name: web
+    ports:
+      - 8585:80
+    #volumes:
+    #  - web:/usr/share/nginx/html
+    networks:
+      - eth0
+
+  database:
+    image: mysql:8.0
+    container_name: database
+    volumes:
+        - database:/var/lib/mysql
+    environment:
+        MYSQL_DATABASE: db
+        MYSQL_ROOT_PASSWORD: senha
+        MYSQL_PASSWORD: senha
+        MYSQL_USER: local
+        MYSQL_ROOT_HOST: '%'
+    ports:
+        - 3306:3306
+    networks:
+      - eth0
+
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+    networks:
+      - eth0
